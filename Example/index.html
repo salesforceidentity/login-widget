@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="salesforce-community" content="https://loginwidget-developer-edition.na16.force.com/test">
+    <meta name="salesforce-client-id" content="3MVG9fMtCkV6eLhde1tmzIdP4Y0cwj_Fz1t6991kzsdV1YrmaGv3nkIJykYESJwEvfC7IuKs2I3IQqGYltazA">
+    <meta name="salesforce-redirect-uri" content="https://loginwidget.herokuapp.com/latest/_callback.html">
+	<meta name="salesforce-mode" content="modal">
+	<meta name="salesforce-target" content="#salesforce-login">
+    <meta name="salesforce-login-handler" content="onLogin">
+    <meta name="salesforce-logout-handler" content="onLogout">
+	<link href="https://loginwidget-developer-edition.na16.force.com/test/resource/salesforce_login_widget_css" rel="stylesheet" type="text/css" />  
+    <script src="https://loginwidget-developer-edition.na16.force.com/test/resource/salesforce_login_widget_js" async defer></script>
+	<script>
+
+	function onLogin(identity) {
+		
+		var targetDiv = document.querySelector(SFIDWidget.config.target);	
+		var img = document.createElement('img'); 
+	 	img.src = identity.photos.thumbnail; 
+		img.className = "sfid-avatar";
+	
+		var username = document.createElement('span'); 
+		username.innerHTML = identity.username;
+		username.className = "sfid-avatar-name";
+	
+		var iddiv = document.createElement('div'); 
+	 	iddiv.id = "sfid-identity";
+		iddiv.appendChild(img);		
+		iddiv.appendChild(username);		
+	
+		targetDiv.innerHTML = '';
+		targetDiv.appendChild(iddiv);	
+
+	}
+	
+	function onLogout() {
+		SFIDWidget.init();
+	}
+	
+	</script>
+	
+	
+</head>	
+<body>
+	<div id="salesforce-login" data-login-event="onLogin"></div>
+</body>
+</html>

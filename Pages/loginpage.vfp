@@ -1,0 +1,55 @@
+<apex:page id="loginPage" showHeader="false" showChat="false" sidebar="false" standardStylesheets="false" cache="false" applyBodyTag="false" applyHtmlTag="false" controller="LoginController" action="{!login}">
+<html>
+	<head>
+    <meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+    <style>body{background-color:{!authconfig.BackgroundColor}}</style>
+    <link href="{!$Resource.salesforce_login_widget_css}" rel="stylesheet" type="text/css" />   
+    </head>        
+    <body>
+    <div id="sfid-wrapper">
+        <div id="sfid-content">
+            <div id="sfid-logo_wrapper" class="sfid-standard_logo_wrapper sfid-mt12">
+                <img src="{!authConfig.LogoUrl}" class="sfid-standard_logo" />
+            </div>
+            <apex:outputPanel rendered="{!hasError}">
+			<div id="sfid-error" class="sfid-mb16">
+                <apex:messages styleClass="sfid-error" />
+            </div>
+            </apex:outputPanel>
+            
+            <apex:outputPanel rendered="{!authConfig.UsernamePasswordEnabled}">
+                <apex:form id="loginForm" forceSSL="true" styleClass="form-signin">
+                    <apex:inputText required="true" id="sfid-username" styleClass="sfid-username sfid-wide sfid-mb12" value="{!username}" label="Username" html-placeholder="Username" />
+                    <apex:inputSecret required="true" id="sfid-password" styleClass="sfid-password sfid-wide sfid-mb12" value="{!password}" label="Password" html-placeholder="Password" />                        
+                    <apex:commandButton action="{!login}" value="Log in" id="login-submit" styleClass="sfid-button sfid-wide sfid-mb16"/>
+                </apex:form>
+                <!-- 
+                <div id="sfid-links">
+                    <a href="{!authConfig.forgotPasswordUrl}">Forgot Password?</a>
+                	<apex:outputPanel rendered="{!authConfig.SelfRegistrationEnabled}">
+                    <a href="{!authConfig.selfRegistrationUrl}" class="sfid-fr">Sign up</a>
+                    </apex:outputPanel>
+                </div>
+				-->
+            </apex:outputPanel>
+            
+            <p class="sfid-small sfid-mb16">
+                {!IF((authConfig.UsernamePasswordEnabled) && (hasAuthProviders), 'or log in with', 'Choose a Provider')}
+            </p>
+            
+            <apex:outputPanel rendered="{!hasAuthProviders}">
+                <div id="sfid-social">
+                    <ul>
+                        <apex:repeat value="{!authProviders}" var="authProvider">
+                            <li>
+                                <a href="{!ssoUrls[authProvider.DeveloperName]}" title="{!authProvider.FriendlyName}"><img src="{!authProvider.IconUrl}"/></a>    
+                            </li>
+                        </apex:repeat>
+                    </ul>
+                </div>
+            </apex:outputPanel>
+        </div>
+    </div>  
+    </body>
+</html>
+</apex:page>
