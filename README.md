@@ -1,5 +1,4 @@
-Salesforce Identity Login Widget
-===
+# Salesforce Identity Login Widget
 
 A javascript login widget for Salesforce External Identity and Communities
 
@@ -15,10 +14,10 @@ To get started:
 
 
 
-Configuration
-==
+##Configuration
+--
 
-_callback.html
+### _callback.html
 
 1. Configure your community url
 2. Configure your callback mode to match the mode you're using for the widget modal-callback, popup-callback, or inline-callback 
@@ -36,7 +35,7 @@ _callback.html
 
 ```
 
-Widget
+### Widget
 
 1. Configure your community url
 2. Configure your client id
