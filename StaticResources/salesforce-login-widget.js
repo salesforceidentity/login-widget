@@ -407,7 +407,7 @@ var SFIDWidget = function() {
 				var rawDomain = SFIDWidget.config.communityURL.substring(8,SFIDWidget.config.communityURL.length);
 				if (rawDomain.indexOf("/") > 0) rawDomain = rawDomain.substring(0,rawDomain.indexOf('/'));
 				SFIDWidget.config.domain = rawDomain;
-				SFIDWidget.XAuthServerUrl = SFIDWidget.config.communityURL + "/services/apexrest/xauth";
+				SFIDWidget.XAuthServerUrl = SFIDWidget.config.communityURL + "/services/apexrest/xauth?community=" + SFIDWidget.config.communityURL;
 				
 			}
 			
