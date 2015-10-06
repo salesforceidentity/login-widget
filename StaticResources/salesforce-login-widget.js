@@ -356,38 +356,61 @@ var SFIDWidget = function() {
 				addButton(targetDiv);
 	
 			} else if ((SFIDWidget.config.mode == 'modal') || (SFIDWidget.config.mode == 'inline')) {
+
+				if ((sessionStorage.authconfig == null) || (sessionStorage.authconfig == 'null')) {
 	
-				var request = new XMLHttpRequest();
-				request.onreadystatechange = function () {
-				    var DONE = this.DONE || 4;
-				    if (this.readyState === DONE){
-						SFIDWidget.authconfig = JSON.parse(this.responseText);
-						
-						var state = '';
-						if (SFIDWidget.config.mode == 'popup') {
-							state = encodeURIComponent(SFIDWidget_loginHandler); 
-						} else {
-							state = (SFIDWidget.config.startURL ? encodeURIComponent(SFIDWidget.config.startURL) : '');
-						}
-				
-						SFIDWidget.config.authorizeURL = '/services/oauth2/authorize?response_type=token&client_id=' + SFIDWidget.config.client_id + '&redirect_uri=' + encodeURIComponent(SFIDWidget.config.redirect_uri) + '&state=' + state; 
-				
-						if (SFIDWidget.config.mode == 'modal') {
-							var targetDiv = document.querySelector(SFIDWidget.config.target );
-							addButton(targetDiv);
-						} else {
-							var targetDiv = document.querySelector(SFIDWidget.config.target );
-							addLogin(targetDiv);
-						}
-				    }
-				};
-				request.open('GET', SFIDWidget.config.communityURL + '/.well-known/auth-configuration', true);
-				request.send(null);
+					var request = new XMLHttpRequest();
+					request.onreadystatechange = function () {
+					    var DONE = this.DONE || 4;
+					    if (this.readyState === DONE){
+							SFIDWidget.authconfig = JSON.parse(this.responseText);
+							sessionStorage.authconfig = btoa(JSON.stringify(SFIDWidget.authconfig));
+							processConfig();
+					    }
+					};
+					request.open('GET', SFIDWidget.config.communityURL + '/.well-known/auth-configuration', true);
+					request.send(null);
+					
+				} else {
+					
+					SFIDWidget.authconfig = JSON.parse(atob(sessionStorage.authconfig));
+					processConfig();
+					
+				}
 	
 			}	
 
 		}
 
+	}
+	
+	function processConfig() {
+		var state = '';
+		if (SFIDWidget.config.mode == 'popup') {
+			state = encodeURIComponent(SFIDWidget_loginHandler); 
+		} else {
+			state = (SFIDWidget.config.startURL ? encodeURIComponent(SFIDWidget.config.startURL) : '');
+		}
+
+		SFIDWidget.config.authorizeURL = '/services/oauth2/authorize?response_type=token&client_id=' + SFIDWidget.config.client_id + '&redirect_uri=' + encodeURIComponent(SFIDWidget.config.redirect_uri) + '&state=' + state; 
+
+		if (SFIDWidget.config.mode == 'modal') {
+			var targetDiv = document.querySelector(SFIDWidget.config.target );
+			addButton(targetDiv);
+		} else {
+			var targetDiv = document.querySelector(SFIDWidget.config.target );
+			addLogin(targetDiv);
+		}
+		
+	}
+	
+    var ready = function(a,b,c){b=document,c='addEventListener';b[c]?b[c]('DOMContentLoaded',a):window.attachEvent('onload',a)}
+	
+	function fetch() {
+	    SFIDWidget.getToken({
+	      retrieve: [location.host],
+	      callback: setup
+	    });
 	}
 	
 
@@ -464,11 +487,12 @@ var SFIDWidget = function() {
 			
 			
 			if ((SFIDWidget.config.mode == 'popup') || (SFIDWidget.config.mode == 'modal') || (SFIDWidget.config.mode == 'inline')) {
-			    SFIDWidget.getToken({
-			      retrieve: [location.host],
-			      callback: setup
-			    });
 				
+				if (document.body == null) {
+					ready(function () {fetch();});
+				} else {
+				    fetch();
+				}
 			}
 	
 			

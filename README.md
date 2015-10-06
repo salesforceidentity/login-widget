@@ -4,7 +4,7 @@ A javascript login widget for Salesforce External Identity and Communities
 
 To get started:
 
-1. Install the following package: https://login.salesforce.com/packaging/installPackage.apexp?p0=04tj0000001aXLU
+1. [https://login.salesforce.com/packaging/installPackage.apexp?p0=04tj0000001aXLZ](Install the following package)
 2. Create a Community
 3. Set your Community login page to the 'loginpage' visualforce page
 4. Go to the force.com site that underlies your Community.  Click on public access settings and add 'SalesforceLoginWidgetXAuthServer' as an allowed Apex Class
