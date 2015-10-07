@@ -4,14 +4,13 @@ A javascript login widget for Salesforce External Identity and Communities
 
 To get started:
 
-1. [https://login.salesforce.com/packaging/installPackage.apexp?p0=04tj0000001aXLZ](Install the following package)
+1. [https://login.salesforce.com/packaging/installPackage.apexp?p0=04tj0000001aXRd](Install the following package)
 2. Create a Community
 3. Set your Community login page to the 'loginpage' visualforce page
-4. Go to the force.com site that underlies your Community.  Click on public access settings and add 'SalesforceLoginWidgetXAuthServer' as an allowed Apex Class
+4. Go to the force.com site that underlies your Community.  Click on public access settings and add 'SalesforceLoginWidgetXAuthServer' as an allowed Apex Class.  [Read this for more information on how to do this](https://developer.salesforce.com/blogs/developer-relations/2012/02/quick-tip-public-restful-web-services-on-force-com-sites.html)
 5. Add the _callback.html file to your site.  Configure it with your meta properties (see below) and capture the URL
 6. Create a Connected App.  Select a scope of openid, and set your callback url to the fully qualified URL from step 5
 5. Add the widget to your page as seen in the example index.html file, configuring each of the meta properties (see below)
-
 
 
 ##Configuration
@@ -19,16 +18,17 @@ To get started:
 
 ### _callback.html
 
-1. Configure your community url
-2. Configure your callback mode to match the mode you're using for the widget modal-callback, popup-callback, or inline-callback 
-3. This will be the callback URL for your Connected App
+1. Configure your community url in both the meta tag and script tag
+2. Configure allowed domains.  Comma separated lists of domains that will participate in SSO.   Blank or * will be open to all.
+3. Configure your callback mode to match the mode you're using for the widget modal-callback, popup-callback, or inline-callback.  This will be the callback URL for your Connected App
 
 ```
 <html>
 <head>
     <meta name="salesforce-community" content="YOUR COMMUNITY URL">
 	<meta name="salesforce-mode" content="popup-callback">
-    <script src="YOUR COMMUNITY URL/resource/salesforce_login_widget_js" async defer></script>
+	<meta name="salesforce-allowed-domains" content="*">
+    <script src="YOUR COMMUNITY URL/resource/salesforce_login_widget_js_min" async defer></script>
 </head> 
 <body></body>    
 </html>
@@ -53,6 +53,6 @@ To get started:
 <meta name="salesforce-login-handler" content="onLogin">
 <meta name="salesforce-logout-handler" content="onLogout">
 <link href="YOUR COMMUNITY URL/resource/salesforce_login_widget_css" rel="stylesheet" type="text/css" />  
-<script src="YOUR COMMUNITY URL/resource/salesforce_login_widget_js" async defer></script>
+<script src="YOUR COMMUNITY URL/resource/salesforce_login_widget_js_min" async defer></script>
 
 ```

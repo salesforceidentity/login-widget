@@ -1,6 +1,4 @@
-1) implement keep alive option for the IDP session
-2) implement session status polling of xauth token
-3) make hints cross domain
-4) prompt=none
-5) remember me hints
+1) configurator
+2) implement keep alive option for the IDP session
+3) remember me 
 

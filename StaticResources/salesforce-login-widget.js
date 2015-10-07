@@ -311,8 +311,18 @@ var SFIDWidget = function() {
 		if(!args) { args = {}; }
 		var requestObj = {
 			cmd: 'xauth::retrieve',
-			retrieve: args.retrieve || [],
+			retrieve: args.retrieve || [SFIDWidget.config.communityURL],
 			callback: args.callback || null
+		}
+		queueRequest(requestObj);
+	}
+	
+	function callAlive(args) {
+		if(!args) { args = {}; }
+		var requestObj = {
+			cmd: 'xauth::alive',
+			retrieve: args.retrieve || [SFIDWidget.config.communityURL],
+			callback: args.callback || aliveCallback
 		}
 		queueRequest(requestObj);
 	}
@@ -325,7 +335,8 @@ var SFIDWidget = function() {
 			expire: args.expire || 0,
 			extend: args.extend || [],
 			session: args.session || false,
-			callback: args.callback || null
+			callback: args.callback || null,
+			communityURL: SFIDWidget.config.communityURL
 		}
 		queueRequest(requestObj);
 	}
@@ -334,9 +345,26 @@ var SFIDWidget = function() {
 		if(!args) { args = {}; }
 		var requestObj = {
 			cmd: 'xauth::expire',
-			callback: args.callback || null
+			callback: args.callback || null,
+			communityURL: SFIDWidget.config.communityURL
 		}
 		queueRequest(requestObj);
+	}
+	
+	function aliveCallback(response) {
+		
+		if ((response.alive) && (SFIDWidget.openid_response == null)) {
+			//you got logged in
+			console.log('you got logged in');
+			SFIDWidget.init();
+			
+		} else if ((!response.alive) && (SFIDWidget.openid_response)) {
+			//you got logged out
+			console.log('you got logged out');
+			SFIDWidget.logout();
+		}
+		
+		
 	}
 	
 	function setup(response) {
@@ -381,6 +409,8 @@ var SFIDWidget = function() {
 			}	
 
 		}
+		
+		setInterval("SFIDWidget.isAlive()",3000);
 
 	}
 	
@@ -408,7 +438,6 @@ var SFIDWidget = function() {
 	
 	function fetch() {
 	    SFIDWidget.getToken({
-	      retrieve: [location.host],
 	      callback: setup
 	    });
 	}
@@ -441,6 +470,12 @@ var SFIDWidget = function() {
 			} else {
 				SFIDWidget.config.mode = modeTag.content;
 				if ((SFIDWidget.config.mode == 'popup-callback') || (SFIDWidget.config.mode == 'modal-callback') || (SFIDWidget.config.mode == 'inline-callback')) {
+					var allowedDomainsTag = document.querySelector('meta[name="salesforce-allowed-domains"]');
+					if (allowedDomainsTag == null) {
+						SFIDWidget.config.allowedDomains = ['*'];
+					} else {
+						SFIDWidget.config.allowedDomains = allowedDomainsTag.content.split(',');
+					}					
 					SFIDWidget.handleLoginCallback();
 					return;
 				}
@@ -589,19 +624,19 @@ var SFIDWidget = function() {
 		setToken: callExtend,
 		getToken: callRetrieve,
 		expireToken: callExpire,
+		isAlive: callAlive,
 		disabled: unsupported // boolean, NOT a function
 	}
 
 }();
 
 function SFIDWidget_handleOpenIDCallback(response) {
-	response.access_token = SFIDWidget.access_token;
 	SFIDWidget.openid_response = response;
 	var encodedResponse = btoa(JSON.stringify(response));
 	SFIDWidget.setToken({
 		  token: encodedResponse, 
 	      expire: 1589249349000, 
-	      extend: ["*"],
+	      extend: SFIDWidget.config.allowedDomains,
 		  callback: SFIDWidget.redirectToStartURL,
 		  session: true
 	    });	
