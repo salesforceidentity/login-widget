@@ -651,8 +651,13 @@ var SFIDWidget = function() {
 					alert('You may only use paths for your startURL.');
 					return null;
 				} else {
-					window.parent.SFIDWidget.openid_response = SFIDWidget.openid_response;
-					window.parent.callLoginEvent();
+					
+					if (self==top) {
+						window.location = SFIDWidget.config.startURL;
+					} else {
+						window.parent.SFIDWidget.openid_response = SFIDWidget.openid_response;
+						window.parent.callLoginEvent();
+					}
 				}
 			
 			} 
