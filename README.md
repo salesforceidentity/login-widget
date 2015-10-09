@@ -4,13 +4,15 @@ A javascript login widget for Salesforce External Identity and Communities
 
 To get started:
 
-1. [https://login.salesforce.com/packaging/installPackage.apexp?p0=04tj0000001aXRd](Install the following package)
+1. [https://login.salesforce.com/packaging/installPackage.apexp?p0=04tj0000001eicP](Install the following package)
 2. Create a Community
-3. Set your Community login page to the 'loginpage' visualforce page
-4. Go to the force.com site that underlies your Community.  Click on public access settings and add 'SalesforceLoginWidgetXAuthServer' as an allowed Apex Class.  [Read this for more information on how to do this](https://developer.salesforce.com/blogs/developer-relations/2012/02/quick-tip-public-restful-web-services-on-force-com-sites.html)
-5. Add the _callback.html file to your site.  Configure it with your meta properties (see below) and capture the URL
-6. Create a Connected App.  Select a scope of openid, and set your callback url to the fully qualified URL from step 5
-5. Add the widget to your page as seen in the example index.html file, configuring each of the meta properties (see below)
+3. Go to the force.com site that underlies your Community.  Click on public access settings and add 'SalesforceLoginWidgetXAuthServer' as an allowed Apex Class.  [Read this for more information on how to do this](https://developer.salesforce.com/blogs/developer-relations/2012/02/quick-tip-public-restful-web-services-on-force-com-sites.html)
+4. Add the _callback.html file to your site.  Configure it with your meta properties (see below) and capture the URL
+5. Create a Connected App.  Select a scope of openid, and set your callback url to the fully qualified URL from step 5
+6. Add the widget to your page as seen in the example index.html file, configuring each of the meta properties (see below)
+
+Optionally, you may set your Community login page to the 'loginpage' visualforce page
+
 
 
 ##Configuration

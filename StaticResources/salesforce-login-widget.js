@@ -82,11 +82,18 @@ var SFIDWidget = function() {
 			}
 		}
 		
+		var error = document.createElement('div'); 
+		error.className = "sfid-mb1";
+		error.id = "sfid-error";
+		error.innerHTML = "Your login attempt has failed. Make sure the username and password are correct. ";
+		error.style.display = "none";
+		content.appendChild(error);
+		
+		
 		if (SFIDWidget.authconfig.LoginPage.UsernamePasswordEnabled) {
 			var form = document.createElement('form'); 
-			form.setAttribute("action", SFIDWidget.config.communityURL + "/loginpage");
-			form.setAttribute("method", "POST");
-			
+			form.setAttribute("onSubmit", "SFIDWidget.authenticate();return false;");
+		
 			var un = document.createElement('input'); 
 			un.className = "sfid-wide sfid-mb12";
 			un.type = "text";
@@ -102,21 +109,14 @@ var SFIDWidget = function() {
 			pw.id = "sfid-password";
 			pw.setAttribute("placeholder", "Password");
 			
-			
-			var su = document.createElement('input'); 
-			su.type = "hidden";
-			su.name = "startURL";
-			su.value = SFIDWidget.config.authorizeURL;
-			su.id = "sfid-starturl";
-
 			var button = document.createElement("input"); 
-		 	button.className = "sfid-button sfid-primary sfid-wide sfid-mb16";
+		 	button.className = "sfid-button sfid-wide sfid-mb16";
 			button.type = "submit";
+			button.id = "sfid-submit";
 			button.value = "Log in";
 			
 			form.appendChild(un);
 			form.appendChild(pw);
-			form.appendChild(su);
 			form.appendChild(button);
 			
 			content.appendChild(form);
@@ -415,6 +415,7 @@ var SFIDWidget = function() {
 	}
 	
 	function processConfig() {
+		
 		var state = '';
 		if (SFIDWidget.config.mode == 'popup') {
 			state = encodeURIComponent(SFIDWidget_loginHandler); 
@@ -433,6 +434,17 @@ var SFIDWidget = function() {
 		}
 		
 	}
+	
+	function showError() {
+		var e = document.getElementById('sfid-error');
+		e.style.display = 'inline';
+	}
+	
+	function hideError() {
+		var e = document.getElementById('sfid-error');
+		e.style.display = 'none';
+	}
+	
 	
     var ready = function(a,b,c){b=document,c='addEventListener';b[c]?b[c]('DOMContentLoaded',a):window.attachEvent('onload',a)}
 	
@@ -551,6 +563,52 @@ var SFIDWidget = function() {
 			}
 				
 			
+		}, authenticate: function(){
+			hideError();
+			document.getElementById("sfid-submit").disabled = true;
+			document.getElementById("sfid-submit").className = 'sfid-disabled sfid-wide sfid-mb16';
+			var un = document.getElementById('sfid-username').value;
+			var pw = document.getElementById('sfid-password').value;
+			
+			if ((un != null) && (un != '') && (pw != null) && (pw != '')) {
+				
+			
+				var request = new XMLHttpRequest();
+				request.open('POST', SFIDWidget.config.communityURL + '/loginservice', true);
+				request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+				request.onreadystatechange = function () {
+				    var DONE = this.DONE || 4;
+				    if (this.readyState === DONE){
+						
+						var apiResponse = JSON.parse(this.responseText);
+						if (apiResponse.result == 'invalid') {
+							showError();
+							document.getElementById("sfid-submit").disabled = false;
+							document.getElementById("sfid-submit").className = 'sfid-button sfid-wide sfid-mb16';
+							
+							
+							
+						} else {
+			
+							var ifrm = document.createElement('iframe');
+							ifrm.setAttribute('src', apiResponse.result);
+							ifrm.className = 'sfid-callback';
+							ifrm.id = 'sfid-callback';
+							document.body.appendChild(ifrm);
+							
+						}
+				    }
+				};
+				request.send('username=' + un + '&password=' + pw + '&startURL=' + encodeURIComponent(SFIDWidget.config.authorizeURL) );
+				
+				
+			} else {
+				showError();
+				document.getElementById("sfid-submit").className = 'sfid-button sfid-wide sfid-mb16';
+				document.getElementById("sfid-submit").disabled = false;
+				
+			}
+			
 		}, cancel: function() {
 			
 			closeLogin();
@@ -593,7 +651,8 @@ var SFIDWidget = function() {
 					alert('You may only use paths for your startURL.');
 					return null;
 				} else {
-					window.location = SFIDWidget.config.startURL;
+					window.parent.SFIDWidget.openid_response = SFIDWidget.openid_response;
+					window.parent.callLoginEvent();
 				}
 			
 			} 
@@ -629,6 +688,14 @@ var SFIDWidget = function() {
 	}
 
 }();
+
+function callLoginEvent() {
+	window[SFIDWidget_loginHandler](SFIDWidget.openid_response);
+	var iframe = document.getElementById('sfid-callback');
+	iframe.parentNode.removeChild(iframe);  
+	if (SFIDWidget.config.mode == 'modal')  SFIDWidget.cancel();
+	
+}
 
 function SFIDWidget_handleOpenIDCallback(response) {
 	SFIDWidget.openid_response = response;
