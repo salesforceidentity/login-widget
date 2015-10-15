@@ -1,0 +1,9 @@
+<apex:page showHeader="false"
+           sidebar="false"
+           standardStylesheets="false"
+           applyBodyTag="false"
+           applyHtmlTag="false"
+           contentType="text/javascript"
+           cache="false"
+           action="{!loginAPI}"
+           controller="LoginController">{"result":"{!apiResponse}"}</apex:page>
