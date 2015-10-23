@@ -482,12 +482,23 @@ var SFIDWidget = function() {
 			} else {
 				SFIDWidget.config.mode = modeTag.content;
 				if ((SFIDWidget.config.mode == 'popup-callback') || (SFIDWidget.config.mode == 'modal-callback') || (SFIDWidget.config.mode == 'inline-callback')) {
+					
 					var allowedDomainsTag = document.querySelector('meta[name="salesforce-allowed-domains"]');
 					if (allowedDomainsTag == null) {
 						SFIDWidget.config.allowedDomains = ['*'];
 					} else {
 						SFIDWidget.config.allowedDomains = allowedDomainsTag.content.split(',');
-					}					
+					}
+					
+					
+					var saveTokenTag = document.querySelector('meta[name="salesforce-save-access-token"]');
+					if ((saveTokenTag == null) || (saveTokenTag.content == 'false')) {
+						SFIDWidget.config.saveToken = false;
+					} else if (saveTokenTag.content == 'true') {
+						SFIDWidget.config.saveToken = true;
+					}
+					
+										
 					SFIDWidget.handleLoginCallback();
 					return;
 				}
@@ -665,7 +676,7 @@ var SFIDWidget = function() {
 			
 		}, logout: function() {
 			
-			if (SFIDWidget.openid_response != null) {
+			if (SFIDWidget.openid_response.access_token != null) {
 				var revokeURL =  SFIDWidget.config.communityURL + '/services/oauth2/revoke?callback=SFIDWidget_handleRevokeCallback&token=' + SFIDWidget.openid_response.access_token;
 				var openidScript = document.createElement('script');
 				openidScript.setAttribute('src', revokeURL);
@@ -704,6 +715,7 @@ function callLoginEvent() {
 
 function SFIDWidget_handleOpenIDCallback(response) {
 	SFIDWidget.openid_response = response;
+	if (SFIDWidget.config.saveToken) SFIDWidget.openid_response.access_token = SFIDWidget.access_token;
 	var encodedResponse = btoa(JSON.stringify(response));
 	SFIDWidget.setToken({
 		  token: encodedResponse, 
