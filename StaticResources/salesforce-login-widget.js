@@ -485,7 +485,7 @@ var SFIDWidget = function() {
 					
 					var allowedDomainsTag = document.querySelector('meta[name="salesforce-allowed-domains"]');
 					if (allowedDomainsTag == null) {
-						SFIDWidget.config.allowedDomains = ['*'];
+						alert('Specify a meta-tag for salesforce-allowed-domains');
 					} else {
 						SFIDWidget.config.allowedDomains = allowedDomainsTag.content.split(',');
 					}

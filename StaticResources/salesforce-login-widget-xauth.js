@@ -29,6 +29,10 @@
 	First version of xauth server code
 	-Jian Shen, Meebo
 **/
+function SFIDWidget_endsWith(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+}
+
 
 ;(function() {
 	// Reference shortcut so minifier can save on characters
@@ -153,10 +157,20 @@
 					// Otherwise check if requesting host is in extend list
 					if(!allowed) {
 						for(var j=0; j<store.extend.length; j++) {
-							if(store.extend[j] == '*' || store.extend[j] == originHostname) {
+							var thisExtend = store.extend[j];
+							if(thisExtend == originHostname ) {
 								allowed = true;
 								break;
 							}
+							
+							if (thisExtend.indexOf('*.') == 0) {
+								var thisDomain = thisExtend.substring(2,thisExtend.length);
+								if( SFIDWidget_endsWith(originHostname, thisDomain)) {
+									allowed = true;
+									break;
+								}
+							}
+							
 						}
 					}
 					if(allowed) {
@@ -217,12 +231,23 @@
 					// Otherwise check if requesting host is in extend list
 					if(!allowed) {
 						for(var j=0; j<store.extend.length; j++) {
-							if(store.extend[j] == '*' || store.extend[j] == originHostname) {
+							var thisExtend = store.extend[j];
+							if(thisExtend == originHostname ) {
 								allowed = true;
 								break;
 							}
+							
+							if (thisExtend.indexOf('*.') == 0) {
+								var thisDomain = thisExtend.substring(2,thisExtend.length);
+								if( SFIDWidget_endsWith(originHostname, thisDomain)) {
+									allowed = true;
+									break;
+								}
+							}
+							
 						}
 					}
+					
 					if(allowed) {
 						// Check if token is expired
 						var dateCheck = new Date(store.expire);

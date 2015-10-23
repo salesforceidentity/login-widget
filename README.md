@@ -21,15 +21,17 @@ Optionally, you may set your Community login page to the 'loginpage' visualforce
 ### _callback.html
 
 1. Configure your community url in both the meta tag and script tag
-2. Configure allowed domains.  Comma separated lists of domains that will participate in SSO.   Blank or * will be open to all.
+2. Configure allowed domains.  Comma separated lists of domains that will participate in SSO.  You can wildcard a domain. 
 3. Configure your callback mode to match the mode you're using for the widget modal-callback, popup-callback, or inline-callback.  This will be the callback URL for your Connected App
+4. Optionally choose to retain your access token
 
 ```
 <html>
 <head>
     <meta name="salesforce-community" content="YOUR COMMUNITY URL">
 	<meta name="salesforce-mode" content="popup-callback">
-	<meta name="salesforce-allowed-domains" content="*">
+	<meta name="salesforce-save-access-token" content="false">
+	<meta name="salesforce-allowed-domains" content="localhost,*.somedomain.com">
     <script src="YOUR COMMUNITY URL/resource/salesforce_login_widget_js_min" async defer></script>
 </head> 
 <body></body>    
