@@ -1,5 +1,5 @@
 /*
-	Salesforce.com 2015 Meebo Inc.
+	Copyright  Salesforce.com 2015
 	Copyright 2010 Meebo Inc.
 
 	Licensed under the Apache License, Version 2.0 (the "License");
@@ -381,7 +381,7 @@ var SFIDWidget = function() {
 			if (SFIDWidget.config.mode == 'popup') {
 
 				var targetDiv = document.querySelector(SFIDWidget.config.target );
-				addButton(targetDiv);
+				processConfig();
 	
 			} else if ((SFIDWidget.config.mode == 'modal') || (SFIDWidget.config.mode == 'inline')) {
 
@@ -425,12 +425,12 @@ var SFIDWidget = function() {
 
 		SFIDWidget.config.authorizeURL = '/services/oauth2/authorize?response_type=token&client_id=' + SFIDWidget.config.client_id + '&redirect_uri=' + encodeURIComponent(SFIDWidget.config.redirect_uri) + '&state=' + state; 
 
-		if (SFIDWidget.config.mode == 'modal') {
-			var targetDiv = document.querySelector(SFIDWidget.config.target );
-			addButton(targetDiv);
-		} else {
+		if (SFIDWidget.config.mode == 'inline') {
 			var targetDiv = document.querySelector(SFIDWidget.config.target );
 			addLogin(targetDiv);
+		} else {
+			var targetDiv = document.querySelector(SFIDWidget.config.target );
+			addButton(targetDiv);
 		}
 		
 	}
