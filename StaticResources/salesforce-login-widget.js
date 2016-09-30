@@ -257,6 +257,7 @@ var SFIDWidget = function() {
 		// Create hidden iframe dom element
 		var doc = win.document;
 		iframe = doc.createElement('iframe');
+		iframe.id = 'sfid_xdomain';
 		var iframeStyle = iframe.style;
 		iframeStyle.position = 'absolute';
 		iframeStyle.left = iframeStyle.top = '-999px';
@@ -283,7 +284,8 @@ var SFIDWidget = function() {
 	// Simple wrapper for the postMessage command that sends serialized requests
 	// to the xauth.org iframe window
 	function makeRequest(requestObj) {
-		postWindow.postMessage(JSON.stringify(requestObj), SFIDWidget.XAuthServerUrl);
+		console.log(document.getElementById('sfid_xdomain').contentWindow.postMessage);
+		document.getElementById('sfid_xdomain').contentWindow.postMessage(JSON.stringify(requestObj), SFIDWidget.XAuthServerUrl);
 	}
 
 	// All requests funnel thru queueRequest which assigns it a unique

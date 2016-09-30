@@ -210,10 +210,13 @@ function SFIDWidget_endsWith(str, suffix) {
 		}
 		**/
 		'xauth::alive': function(originHostname, requestObj) {
+			console.log("entering alive function");
 			if(!requestObj.retrieve || !requestObj.retrieve.length) {
 				logError(requestObj, 'No Retrieve List Requested', originHostname);
 				return null;
 			}
+			console.log("we have a list for " + requestObj);
+			
 		
 			var alive = false;
 			var foundResults = false;
@@ -221,7 +224,7 @@ function SFIDWidget_endsWith(str, suffix) {
 			for(var i=0; i<requestObj.retrieve.length; i++) {
 				var requestedHost = requestObj.retrieve[i];
 				var loaded = storage.getItem(requestedHost);
-				
+				console.log("loaded " + requestedHost);
 				var store = loaded?JSON.parse(loaded):null;
 				// Check if it exists in storage and if it's not blocked by the user
 				if(store && !store.block) {
@@ -230,6 +233,7 @@ function SFIDWidget_endsWith(str, suffix) {
 					
 					// Otherwise check if requesting host is in extend list
 					if(!allowed) {
+						console.log("host is allowed");
 						for(var j=0; j<store.extend.length; j++) {
 							var thisExtend = store.extend[j];
 							if(thisExtend == originHostname ) {
@@ -317,12 +321,13 @@ function SFIDWidget_endsWith(str, suffix) {
 	
 	// Listener for window message events, receives messages from parent window
 	function onMessage(event) {
+		console.log("onMessage");
 		// event.origin will always be of the format scheme://hostname:port
 		// http://www.whatwg.org/specs/web-apps/current-work/multipage/comms.html#dom-messageevent-origin
 		
 		var originHostname = event.origin.split('://')[1].split(':')[0];
 		var requestObj = JSON.parse(event.data);
-		
+		console.log(event.data);
 		/**
 		message generally looks like
 		{
