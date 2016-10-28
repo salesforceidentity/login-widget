@@ -44,14 +44,16 @@ Optionally, you may set your Community login page to the 'loginpage' visualforce
 1. Configure your community url
 2. Configure your client id
 3. Configure your callback url
-4. Configure your mode.  Valid modes are modal, popup, or inline
-5. Configure the node to target
-6. Configure login and logout handlers.  These are the names of your javascript methods to call
+4. Configure your Apex namespace, if you have one in the org
+5. Configure your mode.  Valid modes are modal, popup, or inline
+6. Configure the node to target
+7. Configure login and logout handlers.  These are the names of your javascript methods to call
 
 ```
 <meta name="salesforce-community" content="YOUR COMMUNITY URL">
 <meta name="salesforce-client-id" content="CONNECTED APP CLIENT ID">
 <meta name="salesforce-redirect-uri" content="YOUR CALLBACK URL">
+<meta name="salesforce-namespace" content="">
 <meta name="salesforce-mode" content="inline">
 <meta name="salesforce-target" content="#salesforce-login">
 <meta name="salesforce-login-handler" content="onLogin">

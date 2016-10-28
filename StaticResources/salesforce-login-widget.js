@@ -464,6 +464,13 @@ var SFIDWidget = function() {
 			
 			SFIDWidget.config.startURL = location.pathname+location.search;
 			
+			// adding support for Apex namespace
+			var namespace = null;
+			namespace = document.querySelector('meta[name="salesforce-namespace"]').content;
+			if (namespace != null){
+				namespace = namespace + '/';
+			}
+			
 			var communityURLTag = document.querySelector('meta[name="salesforce-community"]');
 			if (communityURLTag == null) {
 				alert('Specify a meta-tag for salesforce-community');
@@ -473,7 +480,7 @@ var SFIDWidget = function() {
 				var rawDomain = SFIDWidget.config.communityURL.substring(8,SFIDWidget.config.communityURL.length);
 				if (rawDomain.indexOf("/") > 0) rawDomain = rawDomain.substring(0,rawDomain.indexOf('/'));
 				SFIDWidget.config.domain = rawDomain;
-				SFIDWidget.XAuthServerUrl = SFIDWidget.config.communityURL + "/services/apexrest/xauth?community=" + SFIDWidget.config.communityURL;
+				SFIDWidget.XAuthServerUrl = SFIDWidget.config.communityURL + "/services/apexrest/" + namespace + "xauth?community=" + SFIDWidget.config.communityURL;
 				
 			}
 			
