@@ -466,9 +466,9 @@ var SFIDWidget = function() {
 			
 			// adding support for Apex namespace
 			var namespace = null;
-			namespace = document.querySelector('meta[name="salesforce-namespace"]').content;
-			if (namespace != null){
-				namespace = namespace + '/';
+			var namespaceTag = document.querySelector('meta[name="salesforce-namespace"]');
+			if (namespaceTag != null){
+				namespace = namespaceTag.content + '/';
 			}
 			
 			var communityURLTag = document.querySelector('meta[name="salesforce-community"]');
@@ -480,8 +480,9 @@ var SFIDWidget = function() {
 				var rawDomain = SFIDWidget.config.communityURL.substring(8,SFIDWidget.config.communityURL.length);
 				if (rawDomain.indexOf("/") > 0) rawDomain = rawDomain.substring(0,rawDomain.indexOf('/'));
 				SFIDWidget.config.domain = rawDomain;
-				SFIDWidget.XAuthServerUrl = SFIDWidget.config.communityURL + "/services/apexrest/" + namespace + "xauth?community=" + SFIDWidget.config.communityURL;
-				
+				SFIDWidget.XAuthServerUrl = SFIDWidget.config.communityURL + "/services/apexrest/";
+				if (namespace != null) SFIDWidget.XAuthServerUrl += namespace;
+				SFIDWidget.XAuthServerUrl += "xauth?community=" + SFIDWidget.config.communityURL;
 			}
 			
 			var modeTag = document.querySelector('meta[name="salesforce-mode"]');
