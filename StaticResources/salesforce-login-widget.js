@@ -425,7 +425,10 @@ var SFIDWidget = function() {
 			state = (SFIDWidget.config.startURL ? encodeURIComponent(SFIDWidget.config.startURL) : '');
 		}
 
-		SFIDWidget.config.authorizeURL = '/services/oauth2/authorize?response_type=token&client_id=' + SFIDWidget.config.client_id + '&redirect_uri=' + encodeURIComponent(SFIDWidget.config.redirect_uri) + '&state=' + state; 
+		var responseType = 'token';
+		if (SFIDWidget.config.serverCallback) responseType = 'code';
+
+		SFIDWidget.config.authorizeURL = '/services/oauth2/authorize?response_type=' + responseType + '&client_id=' + SFIDWidget.config.client_id + '&redirect_uri=' + encodeURIComponent(SFIDWidget.config.redirect_uri) + '&state=' + state; 
 
 		if (SFIDWidget.config.mode == 'inline') {
 			var targetDiv = document.querySelector(SFIDWidget.config.target );
@@ -485,6 +488,13 @@ var SFIDWidget = function() {
 				SFIDWidget.XAuthServerUrl += "xauth?community=" + SFIDWidget.config.communityURL;
 			}
 			
+			var callbackMethodTag = document.querySelector('meta[name="salesforce-server-callback"]');
+			if ((callbackMethodTag == null) || (callbackMethodTag.content == 'false')) {
+				SFIDWidget.config.serverCallback = false;
+			} else if (callbackMethodTag.content == 'true') {
+				SFIDWidget.config.serverCallback = true;
+			}
+			
 			var modeTag = document.querySelector('meta[name="salesforce-mode"]');
 			if (modeTag == null) {
 				alert('Specify a meta-tag for salesforce-mode');
@@ -507,7 +517,6 @@ var SFIDWidget = function() {
 					} else if (saveTokenTag.content == 'true') {
 						SFIDWidget.config.saveToken = true;
 					}
-					
 										
 					SFIDWidget.handleLoginCallback();
 					return;
@@ -636,31 +645,49 @@ var SFIDWidget = function() {
 			
 		},  handleLoginCallback: function() {
 			
-			if (window.location.hash) {
-	
-				var message = window.location.hash.substr(1);
-				var nvps = message.split('&');
-				for (var nvp in nvps) {
-				    var parts = nvps[nvp].split('=');
-				    if (parts[0] == 'id') {
-						SFIDWidget.openid = decodeURIComponent(parts[1]);
-				    } else if (parts[0] == 'access_token') {
-						SFIDWidget.access_token = parts[1];
-					} else if (parts[0] == 'state') {
-						if (parts[1] != null) 
-						if (SFIDWidget.config.mode == 'popup-callback') {
-							if (parts[1] != null) SFIDWidget_loginHandler = decodeURIComponent(parts[1]);
-						} else {
-							SFIDWidget.config.startURL = decodeURIComponent(parts[1]);
+			if (SFIDWidget.config.serverCallback) {
+				
+				var serverProcessedStartURLTag = document.querySelector('meta[name="salesforce-server-starturl"]');
+				if (serverProcessedStartURLTag == null) {
+					SFIDWidget.config.startURL = "/";
+				} else {
+					SFIDWidget.config.startURL = serverProcessedStartURLTag.content;
+				}
+				
+				var serverProcessedResponseTag = document.querySelector('meta[name="salesforce-server-response"]');
+				if (serverProcessedResponseTag == null) {
+					alert('server callback didnt provide a response');
+					return;
+				} else {
+					SFIDWidget_handleOpenIDCallback(JSON.parse(serverProcessedResponseTag.content));
+				}
+			
+				
+			} else {
+			
+				if (window.location.hash) {
+					var message = window.location.hash.substr(1);
+					var nvps = message.split('&');
+					for (var nvp in nvps) {
+					    var parts = nvps[nvp].split('=');
+					    if (parts[0] == 'id') {
+							SFIDWidget.openid = decodeURIComponent(parts[1]);
+					    } else if (parts[0] == 'access_token') {
+							SFIDWidget.access_token = parts[1];
+						} else if (parts[0] == 'state') {
+							if (parts[1] != null) 
+							if (SFIDWidget.config.mode == 'popup-callback') {
+								if (parts[1] != null) SFIDWidget_loginHandler = decodeURIComponent(parts[1]);
+							} else {
+								SFIDWidget.config.startURL = decodeURIComponent(parts[1]);
+							}
 						}
 					}
+					var openidScript = document.createElement('script');
+					openidScript.setAttribute('src', SFIDWidget.openid + '?version=latest&callback=SFIDWidget_handleOpenIDCallback&access_token=' + SFIDWidget.access_token);
+					document.head.appendChild(openidScript);
 				}
-				var openidScript = document.createElement('script');
-				openidScript.setAttribute('src', SFIDWidget.openid + '?version=latest&callback=SFIDWidget_handleOpenIDCallback&access_token=' + SFIDWidget.access_token);
-				document.head.appendChild(openidScript);
-	
 			}
-			
 		},  redirectToStartURL: function() {
 			
 			if (SFIDWidget.config.mode == 'popup-callback') {
@@ -725,7 +752,10 @@ function callLoginEvent() {
 
 function SFIDWidget_handleOpenIDCallback(response) {
 	SFIDWidget.openid_response = response;
-	if (SFIDWidget.config.saveToken) SFIDWidget.openid_response.access_token = SFIDWidget.access_token;
+	console.log(SFIDWidget.openid_response);
+	if ((SFIDWidget.config.saveToken) && (!SFIDWidget.config.serverCallback)) {
+		SFIDWidget.openid_response.access_token = SFIDWidget.access_token;
+	}
 	var encodedResponse = btoa(JSON.stringify(response));
 	SFIDWidget.setToken({
 		  token: encodedResponse, 
@@ -733,7 +763,8 @@ function SFIDWidget_handleOpenIDCallback(response) {
 	      extend: SFIDWidget.config.allowedDomains,
 		  callback: SFIDWidget.redirectToStartURL,
 		  session: true
-	    });	
+	    });
+
 };
 
 function SFIDWidget_handleRevokeCallback(response) {
