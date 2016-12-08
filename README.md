@@ -9,7 +9,7 @@ To get started:
 3. Go to the force.com site that underlies your Community.  Click on public access settings and add 'SalesforceLoginWidgetXAuthServer' as an allowed Apex Class.  [Read this for more information on how to do this](https://developer.salesforce.com/blogs/developer-relations/2012/02/quick-tip-public-restful-web-services-on-force-com-sites.html)
 4. Add the _callback.html file to your site.  Configure it with your meta properties (see below) and capture the URL
 5. Create a Connected App.  Select a scope of openid, and set your callback url to the fully qualified URL from step 4
-6. Manage the connected app and change the "Permitted Users" Oauth policy to "Admin approved users are pre-authorized" and assign the profiles used by the login widget uers
+6. Manage the connected app and change the "Permitted Users" Oauth policy to "Admin approved users are pre-authorized" and assign the profiles used by the login widget users
 7. Add the widget to your page as seen in the example index.html file, configuring each of the meta properties (see below)
 8. If you allow username/password login, you may set your Community login page to the 'loginpage' visualforce page (having marked this visualforce page and the loginservice visualforce page as public in the force.com settings of the community)
 
