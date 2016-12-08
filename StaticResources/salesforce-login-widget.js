@@ -470,7 +470,7 @@ var SFIDWidget = function() {
 			// adding support for Apex namespace
 			var namespace = null;
 			var namespaceTag = document.querySelector('meta[name="salesforce-namespace"]');
-			if (namespaceTag != null){
+			if (namespaceTag != null && namespaceTag.content != ''){
 				namespace = namespaceTag.content + '/';
 			}
 			
