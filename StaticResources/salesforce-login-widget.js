@@ -684,7 +684,7 @@ var SFIDWidget = function() {
 						}
 					}
 					var openidScript = document.createElement('script');
-					openidScript.setAttribute('src', SFIDWidget.openid + '?version=latest&callback=SFIDWidget_handleOpenIDCallback&access_token=' + SFIDWidget.access_token);
+					openidScript.setAttribute('src', SFIDWidget.openid + '?version=latest&callback=SFIDWidget_handleOpenIDCallback&format=jsonp&access_token=' + SFIDWidget.access_token);
 					document.head.appendChild(openidScript);
 				}
 			}
