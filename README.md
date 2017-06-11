@@ -1,4 +1,8 @@
-# Salesforce Identity Login Widget  
+# Login Widget has been productized!
+Salesforce has turned Login Widget into a full-fledged product. Now known as Salesforce Identity Embedded Login, we have brought the power of Login Widget into the core Salesforce Platform. Check out the [Salesforce External Identiy Implement Guide](https://developer.salesforce.com/docs/atlas.en-us.externalidentityImplGuide.meta/externalidentityImplGuide/external_identity_login_intro.htm) for details. We *highly* recomend porting your deployments to the fully support Embedded Login.
+
+# DEPRECATED BY SALESFORCE EMBEDDED LOGIN 
+#Salesforce Identity Login Widget
 
 A javascript login widget for Salesforce External Identity and Communities
 
